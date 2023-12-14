@@ -26,4 +26,4 @@ Before using this application you must install and configure:
 ```
 
 ### Example of a deployed website on Render.com:
-[https://page-analyzer-java-project-72-4.onrender.com](https://dashboard.render.com/web/srv-clta7mda73kc73efr4rg)https://dashboard.render.com/web/srv-clta7mda73kc73efr4rg"
+[Page-Analyzer](https://java-project-72-xjuj.onrender.com)
