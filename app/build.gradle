@@ -4,6 +4,7 @@ plugins {
     id 'com.adarshr.test-logger' version '3.0.0'
     id 'com.github.ben-manes.versions' version '0.39.0'
     id 'jacoco'
+    id("io.freefair.lombok") version "8.3"
 }
 
 application {
@@ -14,7 +15,6 @@ checkstyle {
     toolVersion = '10.3.3'
 }
 
-
 group = 'hexlet.code'
 version = '1.0-SNAPSHOT'
 
@@ -23,6 +23,11 @@ repositories {
 }
 
 dependencies {
+    implementation("io.javalin:javalin:5.6.2")
+    implementation("io.javalin:javalin-bundle:5.6.2")
+    implementation("io.javalin:javalin-rendering:5.6.2")
+    implementation("org.slf4j:slf4j-simple:2.0.9")
+    implementation("gg.jte:jte:3.1.0")
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation('org.assertj:assertj-core:3.24.2')
