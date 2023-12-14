@@ -2,6 +2,10 @@ package hexlet.code;
 
 import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import io.javalin.rendering.template.JavalinJte;
+import gg.jte.resolve.ResourceCodeResolver;
 
 @Slf4j
 public class App {
@@ -20,8 +24,18 @@ public class App {
     public static Javalin getApp() {
         var app = Javalin.create(config -> config.plugins.enableDevLogging());
 
-        app.get("/", ctx -> ctx.result("Hello World"));
+//        app.get("/", ctx -> ctx.result("Hello World"));
+        app.get("/", ctx -> ctx.render("index.jte"));
+
+        JavalinJte.init(createTemplateEngine());
 
         return app;
+    }
+
+    private static TemplateEngine createTemplateEngine() {
+        ClassLoader classLoader = App.class.getClassLoader();
+        ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
+        TemplateEngine templateEngine = TemplateEngine.create(codeResolver, ContentType.Html);
+        return templateEngine;
     }
 }
