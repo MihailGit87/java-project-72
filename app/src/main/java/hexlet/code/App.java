@@ -25,6 +25,7 @@ public class App {
         var app = Javalin.create(config -> config.plugins.enableDevLogging());
 
         app.get("/", ctx -> ctx.render("index.jte"));
+        app.get("/urls", ctx -> ctx.render("urls/show.jte"));
         JavalinJte.init(createTemplateEngine());
         return app;
     }
