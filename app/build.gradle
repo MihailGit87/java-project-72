@@ -46,7 +46,6 @@ dependencies {
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.1'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
 
-
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
@@ -66,10 +65,4 @@ application {
 
 compileJava {
     options.release = 20
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(20)
-    }
 }

@@ -72,7 +72,7 @@ public final class App {
         addRoutes(app);
 
         // Обработчик before запускается перед каждым запросом
-        // Устанавливаем атрибут ctx для запросов
+        // устанавливаем атрибут ctx для запросов
         app.before(ctx -> ctx.attribute("ctx", ctx));
 
         return app;
