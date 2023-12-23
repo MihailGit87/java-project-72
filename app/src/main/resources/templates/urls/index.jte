@@ -1,6 +1,10 @@
-@import hexlet.code.dto.UrlsPage
-@param UrlsPage urlsPage
-<!--@param String successMessage -->
+@import hexlet.code.dto.UrlPage
+@import hexlet.code.model.Url
+@import hexlet.code.model.UrlCheck
+@import java.util.List
+@param UrlPage urlPage
+
+
 
 <!DOCTYPE html>
 <html>
@@ -24,22 +28,75 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav">
                 <a class="nav-link" href="/">Главная</a>
+                <a class="nav-link" href="/urls">Сайты</a>
             </div>
         </div>
     </div>
 </nav>
 
 <main class="flex-grow-1">
-    @if (urlsPage.getFlashType().equals("success"))
+
+    @if (urlPage.getFlashType().equals("success"))
         <div class="rounded-0 m-0 alert alert-dismissible fade show alert alert-success" role="alert" >
-            ${urlsPage.getFlash()}
+            ${urlPage.getFlash()}
         </div>
     @endif
-    @if (urlsPage.getFlashType().equals("danger"))
+    @if (urlPage.getFlashType().equals("danger"))
         <div class="rounded-0 m-0 alert alert-dismissible fade show alert-danger" role="alert" >
-            ${urlsPage.getFlash()}
+            ${urlPage.getFlash()}
         </div>
     @endif
+
+    <section>
+        <div class="container-lg mt-5">
+            <h1>Сайт ${urlPage.getUrl().getName()}</h1>
+
+            <table class="table table-bordered table-hover mt-3">
+                <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>${urlPage.getUrl().getId()}</td>
+                </tr>
+                <tr>
+                    <td>Имя</td>
+                    <td>${urlPage.getUrl().getName()}</td>
+                </tr>
+                <tr>
+                    <td>Дата создания</td>
+                    <td>${urlPage.getUrl().getCreatedAt().toString()}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h2 class="mt-5">Проверки</h2>
+            <form method="post" action="/urls/${urlPage.getUrl().getId()}/checks">
+                <button type="submit" class="btn btn-primary">Запустить проверку</button>
+            </form>
+
+            <table class="table table-bordered table-hover mt-3">
+                <thead>
+                <th class="col-1">ID</th>
+                <th class="col-1">Код ответа</th>
+                <th>title</th>
+                <th>h1</th>
+                <th>description</th>
+                <th class="col-2">Дата проверки</th>
+                </thead>
+                <tbody>
+                @for (UrlCheck urlCheck : urlPage.getChecks())
+                    <tr>
+                        <td>${urlCheck.getId()}</td>
+                        <td>${urlCheck.getStatusCode()}</td>
+                        <td>${urlCheck.getTitle()}</td>
+                        <td>${urlCheck.getH1()}</td>
+                        <td>${urlCheck.getDescription()}</td>
+                        <td>${urlCheck.getCreatedAt().toString()}</td>
+                    </tr>
+                @endfor
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 
 <footer class="footer border-top py-3 mt-5 bg-light">
