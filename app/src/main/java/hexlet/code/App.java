@@ -29,7 +29,7 @@ import static io.javalin.apibuilder.ApiBuilder.delete;
 public final class App {
 
     private static int getPort() {
-        String port = System.getenv().getOrDefault("PORT", "5432");
+        String port = System.getenv().getOrDefault("PORT", "8080");
         return Integer.valueOf(port);
     }
 
