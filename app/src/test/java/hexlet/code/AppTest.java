@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AppTest {
 
-    // BEGIN
     Javalin app;
 
     private MockWebServer mockWebServer;
@@ -27,7 +26,6 @@ class AppTest {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
         app = App.getApp();
-
     }
 
     @Test
@@ -46,7 +44,6 @@ class AppTest {
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("https://javalintest.io");
-
         });
     }
 

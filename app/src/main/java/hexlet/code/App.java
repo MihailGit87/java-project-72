@@ -28,6 +28,11 @@ import static io.javalin.apibuilder.ApiBuilder.delete;
 @Slf4j
 public final class App {
 
+    public static void main(String[] args) throws IOException {
+        Javalin app = getApp();
+        app.start(getPort());
+    }
+
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "8080");
         return Integer.valueOf(port);
@@ -93,17 +98,10 @@ public final class App {
         });
     }
 
-
     private static TemplateEngine createTemplateEngine() {
         ClassLoader classLoader = App.class.getClassLoader();
         ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
         return TemplateEngine.create(codeResolver, ContentType.Html);
-    }
-
-
-    public static void main(String[] args) throws IOException {
-        Javalin app = getApp();
-        app.start(getPort());
     }
 
     private static InputStream getFileFromResourceAsStream(String fileName) {
@@ -116,5 +114,4 @@ public final class App {
             return reader.lines().collect(Collectors.joining("\n"));
         }
     }
-
 }

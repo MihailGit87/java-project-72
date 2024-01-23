@@ -51,13 +51,11 @@ dependencies {
 
 }
 
-
 jte {
     // Указываем директорию, где находятся исходные файлы шаблонов
     sourceDirectory = java.nio.file.FileSystems.getDefault().getPath('src/main/resources/templates')
 
 }
-
 
 application {
     mainClass = 'hexlet.code.App'
