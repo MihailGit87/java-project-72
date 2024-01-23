@@ -34,17 +34,11 @@ public final class App {
     }
 
     private static int getPort() {
-        String port = System.getenv().getOrDefault("PORT", "8080");
+        String port = System.getenv().getOrDefault("PORT", "7070");
         return Integer.valueOf(port);
     }
 
-//    private static String getDatabaseUrl() {
-//        return System.getenv()
-//                .getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
-//    }
-//postgres://firstpostgresql_user:D0IPdJc3iKngE6SZB9ZNT8GGKRzkeerr@dpg-cls3gbnqd2ns73dvcftg-a
-// .oregon-postgres.render.com/firstpostgresql
-    private static final String JDBC_URL_H2 = "jdbc:h2:./hikariDB";
+    private static final String JDBC_URL_H2 = "jdbc:h2:mem:project";
 
     static String jdbcUrlCurrent = getJdbcDatabaseUrl();
 
