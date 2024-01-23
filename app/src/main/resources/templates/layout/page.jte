@@ -40,8 +40,8 @@
     ${content}
 </main>
 
-<div class="container">
-    <footer class="footer py-3 mt-4">
+<div class="container-xl">
+    <footer class="footer py-3 mt-5 bg-light">
         <ul class="nav justify-content-center border-bottom pb-3 mb-3">
             <li class="nav-item">
                 <a href="${NamedRoutes.rootPath()}" class="nav-link px-2 text-body-secondary">Home</a>
