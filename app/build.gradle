@@ -33,9 +33,9 @@ dependencies {
     implementation 'info.picocli:picocli:4.7.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-    implementation 'com.h2database:h2:2.1.214'
+    implementation 'com.h2database:h2:2.2.220'
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.1'
-    implementation group: 'org.postgresql', name: 'postgresql', version: '42.6.0'
+    implementation("org.postgresql:postgresql:42.7.1")
     implementation group: 'gg.jte', name: 'jte', version: '3.1.0'
     implementation group: 'io.javalin', name: 'javalin-rendering', version: '5.6.2'
     implementation group: 'org.webjars', name: 'bootstrap', version: '5.3.1'
@@ -48,13 +48,11 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
-
 }
 
 jte {
     // Указываем директорию, где находятся исходные файлы шаблонов
     sourceDirectory = java.nio.file.FileSystems.getDefault().getPath('src/main/resources/templates')
-
 }
 
 application {
