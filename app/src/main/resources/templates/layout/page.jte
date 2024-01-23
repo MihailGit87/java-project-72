@@ -40,7 +40,6 @@
     ${content}
 </main>
 
-
 <div class="container">
     <footer class="footer py-3 mt-4">
         <ul class="nav justify-content-center border-bottom pb-3 mb-3">
@@ -52,7 +51,7 @@
             </li>
         </ul>
         <p class="text-center text-body-secondary">
-            Created by <a href="https://github.com/darklittlefinch">Elisa Moritz</a>
+            Created by <a href="https://github.com/MihailGit87">Васильев Михаил</a>
         </p>
     </footer>
 </div>

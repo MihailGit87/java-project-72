@@ -3,32 +3,27 @@ package hexlet.code;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.resolve.ResourceCodeResolver;
-import hexlet.code.controllers.UrlCheckController;
-import hexlet.code.controllers.UrlController;
-import hexlet.code.controllers.RootController;
+import hexlet.code.controller.UrlCheckController;
+import hexlet.code.controller.UrlController;
+import hexlet.code.controller.RootController;
 import hexlet.code.repository.BaseRepository;
+import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import io.javalin.rendering.template.JavalinJte;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
-import static io.javalin.apibuilder.ApiBuilder.path;
-import static io.javalin.apibuilder.ApiBuilder.post;
-import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.delete;
 
 @Slf4j
 public final class App {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException {
         Javalin app = getApp();
         app.start(getPort());
     }
@@ -54,64 +49,42 @@ public final class App {
         return jdbcUrl;
     }
 
-    public static Javalin getApp() throws IOException {
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(jdbcUrlCurrent);
-        var dataSource  = new HikariDataSource(hikariConfig);
-
-        String sql = getContentFromStream(getFileFromResourceAsStream("schema.sql"));
-        log.info(sql);
-        try (var connection = dataSource.getConnection();
-             var statement = connection.createStatement()) {
-            statement.execute(sql);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        BaseRepository.dataSource = dataSource;
-
-        // Создаём приложение
-        var app = Javalin.create(config -> config.plugins.enableDevLogging());
-        JavalinJte.init(createTemplateEngine());
-
-        // Добавляем маршруты в приложение
-        addRoutes(app);
-
-        // Обработчик before запускается перед каждым запросом
-        // устанавливаем атрибут ctx для запросов
-        app.before(ctx -> ctx.attribute("ctx", ctx));
-
-        return app;
-    }
-
-    private static void addRoutes(Javalin app) {
-        app.routes(() -> {
-            path("/", () -> get(RootController.index));
-            path("/urls", () -> {
-                post(UrlController.createUrl);
-                get(UrlController.getUrls);
-                path("{id}", () -> {
-                    get(UrlController.showUrl);
-                    path("checks", () -> post(UrlCheckController.checkUrl));
-                });
-            });
-            path("/test/delete/{id}", () -> delete(UrlController.deleteUrl));
-        });
-    }
-
     private static TemplateEngine createTemplateEngine() {
         ClassLoader classLoader = App.class.getClassLoader();
         ResourceCodeResolver codeResolver = new ResourceCodeResolver("templates", classLoader);
         return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
-    private static InputStream getFileFromResourceAsStream(String fileName) {
-        ClassLoader classLoader = App.class.getClassLoader();
-        return classLoader.getResourceAsStream(fileName);
-    }
+    public static Javalin getApp() throws IOException, SQLException {
 
-    private static String getContentFromStream(InputStream is) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-            return reader.lines().collect(Collectors.joining("\n"));
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(jdbcUrlCurrent);
+
+        var dataSource = new HikariDataSource(hikariConfig);
+
+        var inputStream = App.class.getClassLoader().getResourceAsStream("schema.sql");
+        var reader = new BufferedReader(new InputStreamReader(inputStream));
+        var sql = reader.lines().collect(Collectors.joining("\n"));
+
+        log.info(sql);
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute(sql);
         }
+        BaseRepository.dataSource = dataSource;
+
+        var app = Javalin.create(config -> {
+            config.plugins.enableDevLogging();
+        });
+
+        JavalinJte.init(createTemplateEngine());
+
+        app.get(NamedRoutes.rootPath(), RootController::index);
+        app.get(NamedRoutes.urlsPath(), UrlController::index);
+        app.get(NamedRoutes.urlPath("{id}"), UrlController::show);
+        app.post(NamedRoutes.urlsPath(), UrlController::create);
+        app.post(NamedRoutes.urlChecksPath("{id}"), UrlCheckController::create);
+
+        return app;
     }
 }
