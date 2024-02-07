@@ -7,16 +7,14 @@ import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
 import hexlet.code.util.NormalizedData;
-import hexlet.code.util.Time;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 
 public final class UrlController {
@@ -51,19 +49,19 @@ public final class UrlController {
         try {
             URL parsedUrl = new URI(input).toURL();
             normalizedURL = NormalizedData.getNormalizedURL(parsedUrl);
-        } catch (MalformedURLException | URISyntaxException | IllegalArgumentException e) {
+        } catch (Exception e) {
             ctx.sessionAttribute("flash", "Incorrect URL");
             ctx.sessionAttribute("flash-type", "warning");
             ctx.redirect(NamedRoutes.rootPath());
             return;
         }
 
-        if (UrlRepository.doesUrlExist(normalizedURL)) {
+        if (UrlRepository.findByName(normalizedURL) != null) {
             ctx.sessionAttribute("flash", "This page already exist");
             ctx.sessionAttribute("flash-type", "info");
             ctx.redirect(NamedRoutes.urlsPath());
         } else {
-            var url = new Url(normalizedURL, Time.getCurrentTime());
+            var url = new Url(normalizedURL, new Timestamp(System.currentTimeMillis()));
             UrlRepository.save(url);
             ctx.sessionAttribute("flash", "Page added successfully");
             ctx.sessionAttribute("flash-type", "success");

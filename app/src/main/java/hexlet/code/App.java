@@ -12,9 +12,10 @@ import io.javalin.Javalin;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import io.javalin.rendering.template.JavalinJte;
-import java.io.IOException;
+
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public final class App {
 
-    public static void main(String[] args) throws IOException, SQLException {
+    public static void main(String[] args) throws SQLException {
         Javalin app = getApp();
         app.start(getPort());
     }
@@ -38,15 +39,7 @@ public final class App {
     static String jdbcUrlCurrent = getJdbcDatabaseUrl();
 
     public static String getJdbcDatabaseUrl() {
-        // Получаем значение переменной окружения JDBC_DATABASE_URL
-        String jdbcUrl = System.getenv("JDBC_DATABASE_URL");
-
-        // Если переменная окружения не установлена, устанавливаем значение по умолчанию
-        if (jdbcUrl == null || jdbcUrl.isEmpty()) {
-            jdbcUrl = JDBC_URL_H2; // Значение по умолчанию
-        }
-
-        return jdbcUrl;
+        return System.getenv().getOrDefault("JDBC_DATABASE_URL", JDBC_URL_H2);
     }
 
     private static TemplateEngine createTemplateEngine() {
@@ -55,7 +48,7 @@ public final class App {
         return TemplateEngine.create(codeResolver, ContentType.Html);
     }
 
-    public static Javalin getApp() throws IOException, SQLException {
+    public static Javalin getApp() throws SQLException {
 
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(jdbcUrlCurrent);
@@ -73,9 +66,7 @@ public final class App {
         }
         BaseRepository.dataSource = dataSource;
 
-        var app = Javalin.create(config -> {
-            config.plugins.enableDevLogging();
-        });
+        var app = Javalin.create(config -> config.plugins.enableDevLogging());
 
         JavalinJte.init(createTemplateEngine());
 

@@ -4,7 +4,6 @@ import hexlet.code.model.Url;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
-import hexlet.code.util.Time;
 
 import io.javalin.Javalin;
 import io.javalin.testtools.JavalinTest;
@@ -20,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.StringJoiner;
 
 public final class AppTest {
@@ -46,11 +46,10 @@ public final class AppTest {
         urlName = mockServer.url("/").toString();
         var mockResponse = new MockResponse().setBody(getContentOfHtmlFile());
         mockServer.enqueue(mockResponse);
-//        mockServer.start();
     }
 
     @BeforeEach
-    public void beforeEach() throws SQLException, IOException {
+    public void beforeEach() throws SQLException {
         app = App.getApp();
     }
 
@@ -77,7 +76,7 @@ public final class AppTest {
     }
 
     @Test
-    public void testCreatePage() throws SQLException {
+    public void testCreatePage() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://www.example.com";
             var response = client.post(NamedRoutes.urlsPath(), requestBody);
@@ -89,7 +88,7 @@ public final class AppTest {
 
     @Test
     public void testCreateTheSamePage() throws SQLException {
-        var url = new Url("https://www.example.com", Time.getCurrentTime());
+        var url = new Url("https://www.example.com", new Timestamp(System.currentTimeMillis()));
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=https://www.example.com";
@@ -101,7 +100,7 @@ public final class AppTest {
     }
 
     @Test
-    public void testCreateIncorrectPage() throws SQLException {
+    public void testCreateIncorrectPage() {
         JavalinTest.test(app, (server, client) -> {
             var requestBody = "url=12345";
             var response = client.post(NamedRoutes.urlsPath(), requestBody);
@@ -112,7 +111,7 @@ public final class AppTest {
 
     @Test
     public void testPagePage() throws SQLException {
-        var url = new Url("https://www.example.com", Time.getCurrentTime());
+        var url = new Url("https://www.example.com", new Timestamp(System.currentTimeMillis()));
         UrlRepository.save(url);
         JavalinTest.test(app, (server, client) -> {
             var response = client.get(NamedRoutes.urlPath(url.getId()));
@@ -129,8 +128,8 @@ public final class AppTest {
     }
 
     @Test
-    public void testCheckUrl() throws IOException, SQLException {
-        var url = new Url(urlName, Time.getCurrentTime());
+    public void testCheckUrl() throws SQLException {
+        var url = new Url(urlName, new Timestamp(System.currentTimeMillis()));
         UrlRepository.save(url);
 
         JavalinTest.test(app, (server1, client) -> {
@@ -138,8 +137,6 @@ public final class AppTest {
             assertThat(response.code()).isEqualTo(200);
 
             var urlCheck = UrlCheckRepository.getLastCheck(url.getId()).get();
-            var id = String.valueOf(urlCheck.getId());
-            var statusCode = String.valueOf(urlCheck.getStatusCode());
             var title = urlCheck.getTitle();
             var h1 = urlCheck.getH1();
             var description = urlCheck.getDescription();

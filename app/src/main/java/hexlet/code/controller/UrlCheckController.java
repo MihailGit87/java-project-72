@@ -4,7 +4,6 @@ import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlCheckRepository;
 import hexlet.code.repository.UrlRepository;
 import hexlet.code.util.NamedRoutes;
-import hexlet.code.util.Time;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import kong.unirest.HttpResponse;
@@ -13,6 +12,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 public final class UrlCheckController {
     public static void create(Context ctx) throws SQLException {
@@ -33,7 +33,7 @@ public final class UrlCheckController {
             var descriptionTemp = doc.selectFirst("meta[name=description]");
             var description = descriptionTemp == null ? "" : descriptionTemp.attr("content");
 
-            var createdAt = Time.getCurrentTime();
+            var createdAt = new Timestamp(System.currentTimeMillis());
 
             var urlCheck = new UrlCheck(statusCode, title, h1, description, urlId, createdAt);
             UrlCheckRepository.save(urlCheck);
