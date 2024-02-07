@@ -2,7 +2,6 @@ package hexlet.code.util;
 
 import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlCheckRepository;
-import hexlet.code.repository.UrlRepository;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -21,18 +20,11 @@ public final class NormalizedData {
     }
 
     public static Map<Long, UrlCheck> getListOfLastChecks() throws SQLException {
-        var urls = UrlRepository.getEntities();
+        var urlChecks = UrlCheckRepository.getAllLastChecks();
         Map<Long, UrlCheck> result = new HashMap<>();
 
-        for (var url: urls) {
-            var id = url.getId();
-            UrlCheck lastCheck;
-            if (UrlCheckRepository.getLastCheck(id).isPresent()) {
-                lastCheck = UrlCheckRepository.getLastCheck(id).get();
-            } else {
-                lastCheck = null;
-            }
-            result.put(id, lastCheck);
+        for (var urlCheck : urlChecks) {
+            result.put(urlCheck.getUrlId(), urlCheck);
         }
 
         return result;

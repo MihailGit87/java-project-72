@@ -75,4 +75,28 @@ public final class UrlCheckRepository extends BaseRepository {
             return Optional.empty();
         }
     }
+
+    public static List<UrlCheck> getAllLastChecks() throws SQLException {
+        var sql = "SELECT DISTINCT ON (url_id) * FROM url_checks ORDER BY url_id, created_at DESC";
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql);
+             var resultSet = stmt.executeQuery()) {
+            var result = new ArrayList<UrlCheck>();
+
+            while (resultSet.next()) {
+                var id = resultSet.getLong("id");
+                var statusCode = resultSet.getInt("status_code");
+                var title = resultSet.getString("title");
+                var h1 = resultSet.getString("h1");
+                var description = resultSet.getString("description");
+                var urlId = resultSet.getLong("url_id");
+                var createdAt = resultSet.getTimestamp("created_at");
+                var urlCheck = new UrlCheck(statusCode, title, h1, description, urlId, createdAt);
+                urlCheck.setId(id);
+                result.add(urlCheck);
+            }
+
+            return result;
+        }
+    }
 }
