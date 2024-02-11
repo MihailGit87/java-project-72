@@ -5,7 +5,9 @@ import hexlet.code.model.UrlCheck;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public final class UrlCheckRepository extends BaseRepository {
@@ -32,7 +34,7 @@ public final class UrlCheckRepository extends BaseRepository {
     }
 
     public static List<UrlCheck> getEntitiesById(Long urlId) throws SQLException {
-        var sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC LIMIT 1";
+        var sql = "SELECT * FROM url_checks WHERE url_id = ? ORDER BY created_at DESC";
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, urlId);
@@ -76,12 +78,12 @@ public final class UrlCheckRepository extends BaseRepository {
         }
     }
 
-    public static List<UrlCheck> getAllLastChecks() throws SQLException {
+    public static Map<Long, UrlCheck> getAllLastChecks() throws SQLException {
         var sql = "SELECT DISTINCT ON (url_id) * FROM url_checks ORDER BY url_id, created_at DESC";
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql);
              var resultSet = stmt.executeQuery()) {
-            var result = new ArrayList<UrlCheck>();
+            Map<Long, UrlCheck> result = new HashMap<>();
 
             while (resultSet.next()) {
                 var id = resultSet.getLong("id");
@@ -93,7 +95,7 @@ public final class UrlCheckRepository extends BaseRepository {
                 var createdAt = resultSet.getTimestamp("created_at");
                 var urlCheck = new UrlCheck(statusCode, title, h1, description, urlId, createdAt);
                 urlCheck.setId(id);
-                result.add(urlCheck);
+                result.put(urlCheck.getUrlId(), urlCheck);
             }
 
             return result;

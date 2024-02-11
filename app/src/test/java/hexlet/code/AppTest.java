@@ -15,12 +15,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.StringJoiner;
 
 public final class AppTest {
     private static Javalin app;
@@ -29,15 +28,9 @@ public final class AppTest {
     private static final String HTML_PATH = "src/test/resources/index.html";
 
     public static String getContentOfHtmlFile() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(HTML_PATH));
-        String lineOfFile = reader.readLine();
-        var result = new StringJoiner("\n");
-
-        while (lineOfFile != null) {
-            result.add(lineOfFile);
-            lineOfFile = reader.readLine();
-        }
-        return result.toString();
+        var path = Paths.get(HTML_PATH);
+        var lines = Files.readAllLines(path);
+        return String.join("\n", lines);
     }
 
     @BeforeAll

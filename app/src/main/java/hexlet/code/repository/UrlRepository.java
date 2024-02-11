@@ -44,7 +44,7 @@ public final class UrlRepository extends BaseRepository {
     }
 
     public static List<Url> getEntities() throws SQLException {
-        var sql = "SELECT * FROM urls ORDER BY created_at DESC LIMIT 1";
+        var sql = "SELECT * FROM urls ORDER BY created_at DESC";
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             var resultSet = stmt.executeQuery();
